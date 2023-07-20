@@ -1,5 +1,11 @@
-import { View, Image, SafeAreaView, StyleSheet, ActivityIndicator } from "react-native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  View,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { images, COLORS, SIZES } from "../constants";
@@ -8,20 +14,21 @@ const Index = () => {
   const router = useRouter();
 
   useEffect(() => {
-    setTimeout(() =>{
+    setTimeout(() => {
       handleGetToken();
-    }, 3000)
-  }, [])
+    }, 3000);
+  }, []);
 
-  const handleGetToken = async () =>{
-    const dataToken = await AsyncStorage.getItem("AccessToken")
-    if(!dataToken){
-      router.replace("/login")
-    }else{
-      router.replace("/home")
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem("AccessToken");
+    const userData = await AsyncStorage.getItem("userData");
+    if (!dataToken) {
+      router.replace("/login");
+    } else {
+      console.log(userData);
+      router.replace("/home");
     }
-  }
-  
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -30,7 +37,7 @@ const Index = () => {
           headerStyle: { backgroundColor: COLORS.lightWhite },
           headerShadowVisible: false,
           headerBackVisible: false,
-          headerTitle: '',
+          headerTitle: "",
         }}
       />
       <View style={styles.logoContainer}>

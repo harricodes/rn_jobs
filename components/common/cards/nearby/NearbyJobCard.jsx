@@ -5,24 +5,25 @@ import { checkImageURL } from "../../../../utils";
 import styles from "./nearbyjobcard.style";
 
 const NearbyJobCard = ({ job, handleNavigate }) => {
-  console.log(handleNavigate)
+  console.log(handleNavigate);
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={handleNavigate}
-    >
-      <TouchableOpacity style={styles.logoContainer} >
+    <TouchableOpacity style={styles.container} onPress={handleNavigate}>
+      <TouchableOpacity style={styles.logoContainer}>
         <Image
-          source={{ uri: checkImageURL(job.employer_logo) ? job.employer_logo : "https://t4.ftcdn.net/jpg/05/05/61/73/360_F_505617309_NN1CW7diNmGXJfMicpY9eXHKV4sqzO5H.jpg" }}
+          source={{
+            uri: checkImageURL(job.employer_logo)
+              ? job.employer_logo
+              : "https://t4.ftcdn.net/jpg/05/05/61/73/360_F_505617309_NN1CW7diNmGXJfMicpY9eXHKV4sqzO5H.jpg",
+          }}
           resizeMode="contain"
           style={styles.logImage}
         />
       </TouchableOpacity>
-      <View style={styles.textContainer} >
-        <Text style={styles.jobName } numberOfLines={1}>
-          {job.job_title}
+      <View style={styles.textContainer}>
+        <Text style={styles.jobName} numberOfLines={1}>
+          {job.title}
         </Text>
-        <Text style={styles.type} >{job.job_employment_type}</Text>
+        <Text style={styles.type}>{job.employment_type}</Text>
       </View>
     </TouchableOpacity>
   );

@@ -1,40 +1,71 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useFetch = (endpoint, query) => {
+  //console.log(endpoint);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
- 
+  const [token, setToken] = useState();
+
+  useEffect(() => {
+    handleGetToken();
+  }, []);
+
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem("AccessToken");
+    setToken(dataToken);
+  };
+
   const options = {
     method: "GET",
-    url: `https://jsearch.p.rapidapi.com/${endpoint}`,
+    url: `https://9e4f-105-163-2-216.ngrok-free.app/api/jobs`,
     headers: {
-      "X-RapidAPI-Key": "rYbMc9LWOmmsh1ukFJ1wQTZ1tuFTp1IpAX2jsnro3KJtfu9qGX",
-      "X-RapidAPI-Host": "jsearch.p.rapidapi.com",
+      Authorization: `Bearer ${token}`,
     },
-    params: { ...query },
+    // params: { ...query },
   };
+
+  const option = {
+    method: "GET",
+    url: `https://9e4f-105-163-2-216.ngrok-free.app/api/jobs/${endpoint.id}`,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    // params: { ...query },
+  };
+
+  useEffect(() => {
+    if (token !== undefined) {
+      fetchData();
+    }
+  }, [token]);
 
   const fetchData = async () => {
     setIsLoading(true);
-
+    //console.log(token);
     try {
-      const response = await axios.request(options);
+      const response = endpoint.id
+        ? await axios.request(option)
+        : await axios.request(options);
 
       setData(response.data.data);
       setIsLoading(false);
     } catch (error) {
       setError(error);
       console.log(error);
+
+      // Check if the error is 401 (Unauthorized) and delete the token
+      if (error.response && error.response.status === 401) {
+        await AsyncStorage.removeItem("AccessToken");
+        await AsyncStorage.removeItem("userData");
+        setToken(null);
+      }
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const refetch = () => {
     setIsLoading(true);
