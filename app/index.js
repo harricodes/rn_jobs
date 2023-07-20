@@ -1,45 +1,63 @@
-import { View, ScrollView, SafeAreaView } from "react-native";
-import React, { useState } from "react";
+import { View, Image, SafeAreaView, StyleSheet, ActivityIndicator } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
-import { COLORS, icons, SIZES, images } from "../constants";
-import {
-  Nearbyjobs,
-  Popularjobs,
-  ScreenHeaderBtn,
-  Welcome,
-} from "../components";
+import { images, COLORS, SIZES } from "../constants";
 
-const Home = () => {
+const Index = () => {
   const router = useRouter();
+
+  useEffect(() => {
+    setTimeout(() =>{
+      handleGetToken();
+    }, 3000)
+  }, [])
+
+  const handleGetToken = async () =>{
+    const dataToken = await AsyncStorage.getItem("AccessToken")
+    if(!dataToken){
+      router.replace("/login")
+    }else{
+      router.replace("/home")
+    }
+  }
+  
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+    <SafeAreaView style={styles.container}>
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
           headerShadowVisible: false,
-          headerLeft: () => {
-            <ScreenHeaderBtn iconUrl={icons.menu} dimensions="60%" />;
-          },
-          headerRight: () => {
-            <ScreenHeaderBtn iconUrl={images.profile} dimensions="100%" />;
-          },
-          headerTitle: "",
+          headerBackVisible: false,
+          headerTitle: '',
         }}
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View
-          style={{
-            flex: 1,
-            padding: SIZES.medium,
-          }}
-        >
-          <Welcome />
-          <Popularjobs />
-          <Nearbyjobs />
-        </View>
-      </ScrollView>
+      <View style={styles.logoContainer}>
+        <Image source={images.logo} resizeMode="contain" style={styles.logo} />
+      </View>
+      <View>
+        <ActivityIndicator size={SIZES.large} />
+      </View>
     </SafeAreaView>
   );
 };
 
-export default Home;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: COLORS.lightWhite,
+  },
+  logoContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logo: {
+    width: "180px",
+    height: "120px",
+  },
+});
+
+export default Index;
