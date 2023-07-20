@@ -50,6 +50,7 @@ const LoginComponent = () => {
           headerTitle: '',
         }}
       />
+      <ScrollView showsVerticalScrollIndicator={false}>
             <View style={{ flex: 1, marginHorizontal: 22 }}>
                 <Image
                         source={images.logo}
@@ -199,6 +200,7 @@ const LoginComponent = () => {
                     </Pressable>
                 </View>
             </View>
+            </ScrollView>
         </SafeAreaView>
   );
 };
