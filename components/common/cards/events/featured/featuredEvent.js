@@ -1,10 +1,10 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
-import { checkImageURL } from "../../../../utils";
+import { checkImageURL } from "../../../../../utils";
 
-import styles from "./popularjobcard.style";
+import styles from "./featuedcard.style";
 
-const PopularJobCard = ({ selectedJob, item, handleNavigate }) => {
+const FeaturedEvent = ({ selectedJob, item, handleNavigate }) => {
   return (
     <TouchableOpacity
       style={styles.container(selectedJob, item)}
@@ -16,25 +16,25 @@ const PopularJobCard = ({ selectedJob, item, handleNavigate }) => {
       >
         <Image
           source={{
-            uri: checkImageURL(item.employer_logo)
-              ? item.employer_logo
+            uri: checkImageURL(item.event_banner)
+              ? item.event_banner
               : "https://t4.ftcdn.net/jpg/05/05/61/73/360_F_505617309_NN1CW7diNmGXJfMicpY9eXHKV4sqzO5H.jpg",
           }}
-          resizeMode="contain"
+          resizeMode="cover"
           style={styles.logoImage}
         />
       </TouchableOpacity>
       <Text style={styles.companyName} numberOfLines={1}>
-        {item.company.company_name}
+      By: {item.company.company_name}
       </Text>
       <View style={styles.infoContainer}>
         <Text style={styles.jobName(selectedJob, item)} numberOfLines={1}>
-          {item.title}
+          {item.event_name}
         </Text>
-        <Text styles={styles.location}>{item.company.city}</Text>
+        <Text style={styles.location}>{item.event_price === "0.00" ? "Free": item.event_price}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default PopularJobCard;
+export default FeaturedEvent;

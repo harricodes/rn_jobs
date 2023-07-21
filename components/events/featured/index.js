@@ -10,21 +10,19 @@ import { useRouter } from "expo-router";
 import { COLORS, SIZES } from "../../../constants";
 import PopularJobCard from "../../common/cards/popular/PopularJobCard";
 
-import styles from "./popularjobs.style";
+import styles from "./featured.style";
 import useFetch from "../../../hook/useFetch";
+import FeaturedEvent from "../../common/cards/events/featured/featuredEvent";
 
-const Popularjobs = () => {
-  const router = useRouter();
-  const { data, isLoading, error } = useFetch("/jobs", {
-    query: "React Developer",
-    num_pages: 1,
-  });
-
-
+const Featured = () => {
+    const router = useRouter();
+  const { data, isLoading, error } = useFetch("/events");
+  console.log(data)
+    
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Popular Jobs</Text>
+        <Text style={styles.headerTitle}>Featured Events</Text>
         <TouchableOpacity>
           <Text style={styles.headerBtn}>Show All</Text>
         </TouchableOpacity>
@@ -38,7 +36,7 @@ const Popularjobs = () => {
           <FlatList
             data={data}
             renderItem={({ item }) => (
-              <PopularJobCard
+              <FeaturedEvent
                 item={item}
                 handleNavigate={() => router.push(`/job-details/${item?.id}`)
                 }
@@ -51,7 +49,7 @@ const Popularjobs = () => {
         )}
       </View>
     </View>
-  );
-};
+  )
+}
 
-export default Popularjobs;
+export default Featured

@@ -18,6 +18,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import styles from "./registe.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import {API_URL} from "@env"
 
 const Register = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const Register = () => {
   const handleRegister = async () => {
     try {
       const response = await axios.post(
-        "https://9e4f-105-163-2-216.ngrok-free.app/api/register",
+        API_URL+"/api/register",
         {
           name,
           email,

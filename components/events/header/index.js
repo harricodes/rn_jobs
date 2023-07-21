@@ -5,24 +5,21 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  FlatList,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { icons, SIZES } from "../../../constants";
+import { icons } from "../../../constants";
 
-const jobTypes = ["FULLTIME", "PARTTIME", "CONTRACT"];
 
-import styles from "./welcome.style";
+import styles from "./header.style";
 
-const Welcome = ({ user, searchTerm, setSearchTerm, handleClick }) => {
+const Header = ({ user, searchTerm, setSearchTerm, handleClick }) => {
   const router = useRouter();
-  const [activeJobType, setActiveJobType] = useState("Full-Time");
 
   return (
     <View>
       <View style={styles.container}>
         <Text style={styles.userName}>Hello {user?.name},</Text>
-        <Text style={styles.welcomeMessage}>Find your perfect job.</Text>
+        <Text style={styles.welcomeMessage}>What is happening around you.</Text>
       </View>
       <View style={styles.searchContainer}>
         <View style={styles.searchWrapper}>
@@ -30,7 +27,7 @@ const Welcome = ({ user, searchTerm, setSearchTerm, handleClick }) => {
             style={styles.searchInput}
             value={searchTerm}
             onChangeText={(text) => setSearchTerm(text)}
-            placeholder="What are you looking for?"
+            placeholder="Search For Events..."
           />
         </View>
         <TouchableOpacity style={styles.searchBtn} onPress={handleClick}>
@@ -41,7 +38,7 @@ const Welcome = ({ user, searchTerm, setSearchTerm, handleClick }) => {
           />
         </TouchableOpacity>
       </View>
-      <View style={styles.tabsContainer}>
+      {/* <View style={styles.tabsContainer}>
         <FlatList
           data={jobTypes}
           renderItem={({ item }) => (
@@ -49,7 +46,7 @@ const Welcome = ({ user, searchTerm, setSearchTerm, handleClick }) => {
               style={styles.tab(activeJobType, item)}
               onPress={() => {
                 setActiveJobType(item);
-                router.push(`jobs/${item}`);
+                router.push(`search/${item}`);
               }}
             >
               <Text style={styles.tabText(activeJobType, item)}>{item}</Text>
@@ -59,9 +56,9 @@ const Welcome = ({ user, searchTerm, setSearchTerm, handleClick }) => {
           contentContainerStyle={{ columnGap: SIZES.small }}
           horizontal
         />
-      </View>
+      </View> */}
     </View>
   );
 };
 
-export default Welcome;
+export default Header;

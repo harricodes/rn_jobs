@@ -20,6 +20,7 @@ import { ScrollView } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
+import {API_URL} from "@env"
 
 const LoginComponent = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const LoginComponent = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        "https://9e4f-105-163-2-216.ngrok-free.app/api/login",
+        API_URL+"/api/login",
         {
           email,
           password,

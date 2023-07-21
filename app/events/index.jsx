@@ -2,21 +2,15 @@ import { View, ScrollView, SafeAreaView } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
 import { COLORS, icons, SIZES, images } from "../../constants";
+import { ScreenHeaderBtn } from "../../components";
+import Header from "../../components/events/header";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  Nearbyjobs,
-  Popularjobs,
-  ScreenHeaderBtn,
-  Welcome,
-} from "../../components";
+import Featured from "../../components/events/featured";
+import RecentEvents from "../../components/events/recent";
 
-import HomeFooter from "../../components/home/footer";
-
-const Home = () => {
-  const router = useRouter();
-  const [user, setUser] = useState(null); // Initialize user as null
+const Events = () => {
   const [searchTerm, setSearchTerm] = useState("");
-
+  const [user, setUser] = useState(null); // Initialize user as null
 
   useEffect(() => {
     handleGetUser();
@@ -37,20 +31,12 @@ const Home = () => {
       // Handle the error as needed, e.g., show an error message
     }
   };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
           headerShadowVisible: false,
-          // headerLeft: () => (
-          //   <ScreenHeaderBtn
-          //     iconUrl={icons.menu}
-          //     dimensions="60%"
-          //     onPress={() => {}}
-          //   />
-          // ),
           headerRight: () => (
             <ScreenHeaderBtn iconUrl={images.profile} dimensions="100%" />
           ),
@@ -58,13 +44,13 @@ const Home = () => {
         }}
       />
       <ScrollView showsVerticalScrollIndicator={false} style={{paddingBottom: 60}}>
-        <View
+      <View
           style={{
             flex: 1,
             padding: SIZES.medium,
           }}
         >
-          <Welcome
+          <Header
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             handleClick={() => {
@@ -74,13 +60,12 @@ const Home = () => {
             }}
             user={user}
           />
-          <Popularjobs />
-          <Nearbyjobs />
+          <Featured />
+          <RecentEvents />
         </View>
       </ScrollView>
-      <HomeFooter />
     </SafeAreaView>
-  );
-};
+  )
+}
 
-export default Home;
+export default Events

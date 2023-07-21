@@ -3,12 +3,13 @@ import { useRouter } from "expo-router";
 import { COLORS } from "../../../constants";
 import NearbyJobCard from "../../common/cards/nearby/NearbyJobCard";
 
-import styles from "./nearbyjobs.style";
+import styles from "./recentStyles.style";
 import useFetch from "../../../hook/useFetch";
+import RecentEvent from "../../common/cards/events/recents";
 
-const Nearbyjobs = () => {
+const RecentEvents = () => {
   const router = useRouter();
-  const { data, isLoading, error } = useFetch("/jobs", {
+  const { data, isLoading, error } = useFetch("/events", {
     query: "React Developer",
     num_pages: 1,
   });
@@ -16,7 +17,7 @@ const Nearbyjobs = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Nearby Jobs</Text>
+        <Text style={styles.headerTitle}>Recent Events</Text>
         <TouchableOpacity>
           <Text style={styles.headerBtn}>Show All</Text>
         </TouchableOpacity>
@@ -28,7 +29,7 @@ const Nearbyjobs = () => {
           <Text>Something Went Wrong</Text>
         ) : (
           data?.map((job) => (
-            <NearbyJobCard
+            <RecentEvent
               job={job}
               key={`nearby-job ${job?.id}`}
               handleNavigate={() => router.push(`/job-details/${job?.id}`)}
@@ -40,4 +41,4 @@ const Nearbyjobs = () => {
   );
 };
 
-export default Nearbyjobs;
+export default RecentEvents;

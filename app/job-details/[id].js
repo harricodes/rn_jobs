@@ -10,9 +10,11 @@ import {
   Specifics,
 } from "../../components";
 import { COLORS, icons, SIZES } from "../../constants";
-import useFetch from "../../hook/useFetch";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native";
 import { ScrollView } from "react-native";
+import axios from "axios";
+import { API_URL } from "@env";
 
 const tabs = ["About", "Qualifications", "Responsibilities"];
 
@@ -21,22 +23,55 @@ const JobDetails = () => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState(tabs[0]);
 
-  const { data, isLoading, error, refetch } = useFetch({
-    id: params.id,
-  });
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    // Call the refetch function when the component loads
-    if (data.length > 0) refetch();
-  }, [data]);
+    if(params.id !== undefined){
+      fetchData();
+    }
+    
+  }, [params.id]);
 
-  //console.log(data);
+  const handleGetToken = async () => {
+    const dataToken = await AsyncStorage.getItem("AccessToken");
+    fetchData(dataToken);
+  };
 
-  const [refreshing, setRefreshing] = useState(false);
+  const options = {
+    method: "GET",
+    url: API_URL + `/job/${params.id}`,
+    
+    // params: { ...query },
+  };
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    //console.log(token);
+    try {
+      const response = await axios.request(options);
+
+      setData(response.data.data);
+      setIsLoading(false);
+    } catch (error) {
+      setError(error);
+      console.log(error);
+
+      // Check if the error is 401 (Unauthorized) and delete the token
+      if (error.response && error.response.status === 401) {
+        await AsyncStorage.removeItem("AccessToken");
+        await AsyncStorage.removeItem("userData");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const onRefresh = () => {
     setRefreshing(true);
-    refetch();
+    handleGetToken();
     setRefreshing(false);
   };
 
@@ -82,8 +117,6 @@ const JobDetails = () => {
           <Text>Something went wrong</Text>
         ) : data.length === 0 ? (
           <Text>No data</Text>
-        ) : data.length > 0 ? (
-          <Text></Text>
         ) : (
           <View style={{ padding: SIZES.medium, paddingBottom: 100 }}>
             <Company

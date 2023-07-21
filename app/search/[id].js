@@ -14,6 +14,7 @@ import { ScreenHeaderBtn, NearbyJobCard } from "../../components";
 import { COLORS, icons, SIZES } from "../../constants";
 import styles from "../../styles/search";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {API_URL} from "@env"
 
 const JobSearch = () => {
   const params = useSearchParams();
@@ -32,7 +33,7 @@ const JobSearch = () => {
       const token = await AsyncStorage.getItem("AccessToken");
 
       const response = await axios.get(
-        "https://9e4f-105-163-2-216.ngrok-free.app/api/job/search",
+        API_URL+"/job/search",
         {
           headers: {
             Authorization: `Bearer ${token}`,

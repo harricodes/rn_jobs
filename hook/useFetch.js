@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {API_URL} from "@env"
 
 const useFetch = (endpoint, query) => {
-  //console.log(endpoint);
+  console.log(endpoint);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -20,7 +21,7 @@ const useFetch = (endpoint, query) => {
 
   const options = {
     method: "GET",
-    url: `https://9e4f-105-163-2-216.ngrok-free.app/api/jobs`,
+    url: API_URL+`${endpoint}`,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -29,7 +30,7 @@ const useFetch = (endpoint, query) => {
 
   const option = {
     method: "GET",
-    url: `https://9e4f-105-163-2-216.ngrok-free.app/api/jobs/${endpoint.id}`,
+    url: API_URL+`/${endpoint}/${endpoint.id}`,
     headers: {
       Authorization: `Bearer ${token}`,
     },

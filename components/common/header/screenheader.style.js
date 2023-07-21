@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
   btnContainer: {
     width: 40,
     height: 40,
+    marginRight:18,
     backgroundColor: COLORS.white,
     borderRadius: SIZES.small / 1.25,
     justifyContent: "center",
