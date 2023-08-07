@@ -1,22 +1,20 @@
+import React, { useEffect } from "react";
 import { View, ScrollView, SafeAreaView } from "react-native";
-import React, { useState, useEffect } from "react";
 import { Stack, useRouter } from "expo-router";
-import { COLORS, icons, SIZES, images } from "../../constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { COLORS, SIZES, images } from "../../constants";
 import {
   Nearbyjobs,
   Popularjobs,
   ScreenHeaderBtn,
   Welcome,
 } from "../../components";
-
 import HomeFooter from "../../components/home/footer";
 
 const Home = () => {
   const router = useRouter();
-  const [user, setUser] = useState(null); // Initialize user as null
-  const [searchTerm, setSearchTerm] = useState("");
-
+  const [user, setUser] = React.useState(null);
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   useEffect(() => {
     handleGetUser();
@@ -27,8 +25,7 @@ const Home = () => {
       const dataToken = await AsyncStorage.getItem("AccessToken");
       const userData = await AsyncStorage.getItem("userData");
       if (!userData || !dataToken) {
-        // If no user data or token is found, navigate to login screen
-        router.replace("/login");
+        replace("/login"); // Navigate to login screen if no user data or token found
       } else {
         setUser(JSON.parse(userData));
       }
@@ -38,33 +35,32 @@ const Home = () => {
     }
   };
 
+  const handleSearch = (searchTerm) => {
+    if (searchTerm) {
+      push(`/search/${searchTerm}`);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
           headerShadowVisible: false,
-          // headerLeft: () => (
-          //   <ScreenHeaderBtn
-          //     iconUrl={icons.menu}
-          //     dimensions="60%"
-          //     onPress={() => {}}
-          //   />
-          // ),
+          headerLeft: null, // Hide the back button
           headerRight: () => (
             <ScreenHeaderBtn iconUrl={images.profile} dimensions="100%" />
           ),
           headerTitle: "",
         }}
       />
-      <ScrollView showsVerticalScrollIndicator={false} style={{paddingBottom: 60}}>
-        <View
-          style={{
-            flex: 1,
-            padding: SIZES.medium,
-          }}
-        >
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ paddingBottom: 60 }}
+      >
+        <View style={{ flex: 1, padding: SIZES.medium }}>
           <Welcome
+            user={user}
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             handleClick={() => {
@@ -72,7 +68,6 @@ const Home = () => {
                 router.push(`/search/${searchTerm}`);
               }
             }}
-            user={user}
           />
           <Popularjobs />
           <Nearbyjobs />

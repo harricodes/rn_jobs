@@ -7,6 +7,8 @@ import {
   TextInput,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 import { COLORS, FONT, SIZES, SHADOWS, images } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,12 +17,11 @@ import Button from "../../components/button";
 
 import { Stack, useRouter } from "expo-router";
 
-import styles from "./login.style";
 import { ScrollView } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
-import {API_URL} from "@env"
+import { API_URL } from "@env";
 
 const LoginComponent = () => {
   const router = useRouter();
@@ -28,16 +29,15 @@ const LoginComponent = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    setLoading(true); // Show loading animation
     try {
-      const response = await axios.post(
-        API_URL+"/api/login",
-        {
-          email,
-          password,
-        }
-      );
+      const response = await axios.post(API_URL + "/login", {
+        email,
+        password,
+      });
 
       const { user, access_token } = response.data;
 
@@ -54,7 +54,8 @@ const LoginComponent = () => {
         text1: "Login error",
         text2: error.response.data.error,
       });
-      // console.error("Login error:", error.response.data.error);
+    } finally {
+      setLoading(false); // Hide loading animation
     }
   };
 
@@ -66,6 +67,7 @@ const LoginComponent = () => {
           headerShadowVisible: false,
           headerBackVisible: false,
           headerTitle: "",
+          headerLeft: null, // Hide the back button
         }}
       />
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -202,18 +204,39 @@ const LoginComponent = () => {
               color={isChecked ? COLORS.primary : undefined}
             />
 
-            <Text>Remenber Me</Text>
+            <Text>Remember Me</Text>
           </View>
 
           <Button
             title="Login"
             filled
             onPress={handleLogin}
+            disabled={loading} // Disable the button when loading
             style={{
               marginTop: 18,
               marginBottom: 4,
             }}
           />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "center",
+              marginVertical: 22,
+            }}
+          >
+            <Pressable onPress={() => router.push("/forgot-password")}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  color: COLORS.primary,
+                  fontWeight: "bold",
+                  marginLeft: 6,
+                }}
+              >
+                Forgot Password?
+              </Text>
+            </Pressable>
+          </View>
 
           <View
             style={{
@@ -223,7 +246,7 @@ const LoginComponent = () => {
             }}
           >
             <Text style={{ fontSize: 16, color: COLORS.black }}>
-              Don't have an account ?{" "}
+              Don't have an account?{" "}
             </Text>
             <Pressable onPress={() => router.push("/register")}>
               <Text
@@ -240,9 +263,32 @@ const LoginComponent = () => {
           </View>
         </View>
       </ScrollView>
+
+      {/* Show loading animation when the button is disabled */}
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      )}
+
       <Toast />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  logoImage: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+});
 
 export default LoginComponent;

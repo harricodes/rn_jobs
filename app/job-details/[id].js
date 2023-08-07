@@ -27,34 +27,42 @@ const JobDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  
+
+  useEffect(() => {});
 
   useEffect(() => {
-    if(params.id !== undefined){
-      fetchData();
+    if (params.id !== undefined) {
+      handleGetToken();
     }
-    
   }, [params.id]);
 
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem("AccessToken");
-    fetchData(dataToken);
+    const userData = await AsyncStorage.getItem("userData");
+    const user = JSON.parse(userData);
+    fetchData(dataToken, user);
   };
 
-  const options = {
-    method: "GET",
-    url: API_URL + `/job/${params.id}`,
-    
-    // params: { ...query },
-  };
+  // const options = {
+  //   method: "GET",
+  //   url: API_URL + `/job/${params.id}/user/${user.id}`,
 
-  const fetchData = async () => {
+  //   // params: { ...query },
+  // };
+
+  const fetchData = async (dataToken, user) => {
     setIsLoading(true);
     //console.log(token);
     try {
-      const response = await axios.request(options);
-
-      setData(response.data.data);
-      setIsLoading(false);
+      //const response = await axios.request(options);
+      axios
+        .get(API_URL + `/job/${params.id}/user/${user.id}`)
+        .then((response) => {
+          console.log(response.data);
+          setData(response.data.data);
+          setIsLoading(false);
+        });
     } catch (error) {
       setError(error);
       console.log(error);
@@ -134,7 +142,8 @@ const JobDetails = () => {
           </View>
         )}
       </ScrollView>
-      <JobFooter />
+      
+      <JobFooter jobId={data?.id} is_applied={data?.is_applied} />
     </SafeAreaView>
   );
 };

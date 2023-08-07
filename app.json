@@ -5,6 +5,14 @@
       "bundler": "metro"
     },
     "name": "rn_jobs",
-    "slug": "rn_jobs"
+    "slug": "rn_jobs",
+    "extra": {
+      "eas": {
+        "projectId": "729e12fa-c0ad-4939-b252-fbd8e37a355c"
+      }
+    },
+    "android": {
+      "package": "com.patanisha.mobile"
+    }
   }
 }

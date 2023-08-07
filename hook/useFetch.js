@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {API_URL} from "@env"
+import { API_URL } from "@env";
+import { useRouter } from "expo-router";
 
 const useFetch = (endpoint, query) => {
+  const router = useRouter();
   console.log(endpoint);
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +23,7 @@ const useFetch = (endpoint, query) => {
 
   const options = {
     method: "GET",
-    url: API_URL+`${endpoint}`,
+    url: API_URL + `${endpoint}`,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -30,7 +32,7 @@ const useFetch = (endpoint, query) => {
 
   const option = {
     method: "GET",
-    url: API_URL+`/${endpoint}/${endpoint.id}`,
+    url: API_URL + `/${endpoint}/${endpoint.id}`,
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -62,6 +64,8 @@ const useFetch = (endpoint, query) => {
         await AsyncStorage.removeItem("AccessToken");
         await AsyncStorage.removeItem("userData");
         setToken(null);
+
+        router.replace("/login");
       }
     } finally {
       setIsLoading(false);

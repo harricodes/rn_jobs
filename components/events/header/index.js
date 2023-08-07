@@ -1,14 +1,7 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { useRouter } from "expo-router";
 import { icons } from "../../../constants";
-
 
 import styles from "./header.style";
 
@@ -38,25 +31,6 @@ const Header = ({ user, searchTerm, setSearchTerm, handleClick }) => {
           />
         </TouchableOpacity>
       </View>
-      {/* <View style={styles.tabsContainer}>
-        <FlatList
-          data={jobTypes}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.tab(activeJobType, item)}
-              onPress={() => {
-                setActiveJobType(item);
-                router.push(`search/${item}`);
-              }}
-            >
-              <Text style={styles.tabText(activeJobType, item)}>{item}</Text>
-            </TouchableOpacity>
-          )}
-          keyExtractor={(item) => item}
-          contentContainerStyle={{ columnGap: SIZES.small }}
-          horizontal
-        />
-      </View> */}
     </View>
   );
 };

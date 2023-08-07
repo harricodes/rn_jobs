@@ -16,7 +16,7 @@ import styles from "./welcome.style";
 
 const Welcome = ({ user, searchTerm, setSearchTerm, handleClick }) => {
   const router = useRouter();
-  const [activeJobType, setActiveJobType] = useState("Full-Time");
+  const [activeJobType, setActiveJobType] = useState("FULLTIME");
 
   return (
     <View>
@@ -49,7 +49,7 @@ const Welcome = ({ user, searchTerm, setSearchTerm, handleClick }) => {
               style={styles.tab(activeJobType, item)}
               onPress={() => {
                 setActiveJobType(item);
-                router.push(`jobs/${item}`);
+                router.push(`search/${item}`);
               }}
             >
               <Text style={styles.tabText(activeJobType, item)}>{item}</Text>

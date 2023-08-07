@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import {
   View,
   Image,
@@ -6,13 +7,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect } from "react";
-import { Stack, useRouter } from "expo-router";
+// Make sure you have the appropriate constants defined in the "../constants" path
 import { images, COLORS, SIZES } from "../constants";
+import { Stack, useRouter } from "expo-router";
 
 const Index = () => {
   const router = useRouter();
-
   useEffect(() => {
     setTimeout(() => {
       handleGetToken();
@@ -22,11 +22,17 @@ const Index = () => {
   const handleGetToken = async () => {
     const dataToken = await AsyncStorage.getItem("AccessToken");
     const userData = await AsyncStorage.getItem("userData");
+    const welcomeDone = await AsyncStorage.getItem("welcomeDone");
     if (!dataToken) {
-      router.replace("/login");
+      if (welcomeDone !== "true") {
+        router.replace("/welcome");
+      } else {
+        router.replace("/login");
+      } // Uncomment this if using a valid router instance
     } else {
       console.log(userData);
-      router.replace("/home");
+      router.replace("/home"); // Uncomment this if using a valid router instance
+      console.log("Redirecting to home"); // Placeholder for router.replace("/home");
     }
   };
 
@@ -62,8 +68,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   logo: {
-    width: "180px",
-    height: "120px",
+    width: 180,
+    height: 120,
   },
 });
 

@@ -38,7 +38,7 @@ const Featured = () => {
             renderItem={({ item }) => (
               <FeaturedEvent
                 item={item}
-                handleNavigate={() => router.push(`/job-details/${item?.id}`)
+                handleNavigate={() => router.push(`/event-details/${item?.id}`)
                 }
               />
             )}

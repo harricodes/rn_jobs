@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,19 +7,19 @@ import {
   TextInput,
   Pressable,
   TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 import Checkbox from "expo-checkbox";
-import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS, images } from "../../constants";
 import Button from "../../components/button";
 import { Stack, useRouter } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
-
-import styles from "./registe.styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import {API_URL} from "@env"
+import Toast from "react-native-toast-message";
+import { API_URL } from "@env";
 
 const Register = () => {
   const router = useRouter();
@@ -28,32 +29,39 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
+    setLoading(true);
     try {
-      const response = await axios.post(
-        API_URL+"/api/register",
-        {
-          name,
-          email,
-          phone_number,
-          password,
-        }
-      );
+      const response = await axios.post(API_URL + "/register", {
+        name,
+        email,
+        phone_number,
+        password,
+      });
 
       const { user, access_token } = response.data;
 
-      // Store the user data and access token in AsyncStorage
       await AsyncStorage.setItem("userData", JSON.stringify(user));
       await AsyncStorage.setItem("AccessToken", access_token);
       router.replace("/home");
-
-      // Redirect the user to the Home screen or any other screen
-      // Add your navigation logic here
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Registration error:", error.response.data.error);
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          "Registration error:" + JSON.stringify(error.response.data.error),
+        position: "bottom",
+        visibilityTime: 4000,
+        autoHide: true,
+      });
+    } finally {
+      setLoading(false);
     }
   };
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       <Stack.Screen
@@ -198,18 +206,6 @@ const Register = () => {
                 paddingRight: 5,
               }}
             >
-              {/* <TextInput
-                            placeholder='+254'
-                            placeholderTextColor={COLORS.black}
-                            keyboardType='numeric'
-                            style={{
-                                width: "12%",
-                                borderRightWidth: 1,
-                                borderLeftColor: COLORS.grey,
-                                height: "100%"
-                            }}
-                        /> */}
-
               <TextInput
                 placeholder="Enter your phone number"
                 placeholderTextColor={COLORS.black}
@@ -327,8 +323,31 @@ const Register = () => {
           </View>
         </View>
       </ScrollView>
+
+      {loading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+        </View>
+      )}
+
+      <Toast />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  logoImage: {
+    width: 120,
+    height: 120,
+    alignSelf: "center",
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 9999,
+  },
+});
 
 export default Register;

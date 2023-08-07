@@ -9,6 +9,7 @@ import Featured from "../../components/events/featured";
 import RecentEvents from "../../components/events/recent";
 
 const Events = () => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [user, setUser] = useState(null); // Initialize user as null
 
@@ -43,8 +44,11 @@ const Events = () => {
           headerTitle: "",
         }}
       />
-      <ScrollView showsVerticalScrollIndicator={false} style={{paddingBottom: 60}}>
-      <View
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ paddingBottom: 60 }}
+      >
+        <View
           style={{
             flex: 1,
             padding: SIZES.medium,
@@ -55,7 +59,7 @@ const Events = () => {
             setSearchTerm={setSearchTerm}
             handleClick={() => {
               if (searchTerm) {
-                router.push(`/search/${searchTerm}`);
+                router.push(`/events/search/${searchTerm}`);
               }
             }}
             user={user}
@@ -65,7 +69,7 @@ const Events = () => {
         </View>
       </ScrollView>
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Events
+export default Events;

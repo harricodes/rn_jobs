@@ -32,7 +32,7 @@ const RecentEvents = () => {
             <RecentEvent
               job={job}
               key={`nearby-job ${job?.id}`}
-              handleNavigate={() => router.push(`/job-details/${job?.id}`)}
+              handleNavigate={() => router.replace(`/event-details/${job?.id}`)}
             />
           ))
         )}

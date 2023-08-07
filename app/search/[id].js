@@ -14,11 +14,12 @@ import { ScreenHeaderBtn, NearbyJobCard } from "../../components";
 import { COLORS, icons, SIZES } from "../../constants";
 import styles from "../../styles/search";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {API_URL} from "@env"
+import { API_URL } from "@env";
 
 const JobSearch = () => {
   const params = useSearchParams();
   const router = useRouter();
+  console.log(params.id);
 
   const [searchResult, setSearchResult] = useState([]);
   const [searchLoader, setSearchLoader] = useState(false);
@@ -32,17 +33,11 @@ const JobSearch = () => {
     try {
       const token = await AsyncStorage.getItem("AccessToken");
 
-      const response = await axios.get(
-        API_URL+"/job/search",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            search: params.id,
-          },
-        }
-      );
+      const response = await axios.get(API_URL + `/job/search/${params.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setSearchResult(response.data.data);
     } catch (error) {
       setSearchError(error);
