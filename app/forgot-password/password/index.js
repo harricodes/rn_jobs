@@ -10,10 +10,10 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, images } from "../../constants";
+import { COLORS, FONT, SIZES, SHADOWS, images } from "../../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
-import Button from "../../components/button";
+import Button from "../../../components/button";
 
 import { Stack, useRouter } from "expo-router";
 
@@ -23,63 +23,64 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { API_URL } from "@env";
 
-const LoginComponent = () => {
+const index = () => {
   const router = useRouter();
-  const [isPasswordShown, setIsPasswordShown] = useState(true);
-  const [isChecked, setIsChecked] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [password, setPassword] = useState(null);
+  const [passwordConf, setPasswordConf] = useState(null);
 
   const handleLogin = async () => {
-    setLoading(true); // Show loading animation
+    setLoading(true);
+    try {
+      const email = await AsyncStorage.getItem("reset");
+      const code = await AsyncStorage.getItem("code");
 
-    axios
-      .post(API_URL + "/login", {
-        email,
-        password,
-      })
-      .then(async (resp) => {
-        setLoading(false);
-
-        await AsyncStorage.setItem("userData", JSON.stringify(resp.data.user));
-        await AsyncStorage.setItem("AccessToken", resp.data.access_token);
-
-        Toast.show({
-          type: "success",
-          text1: "Login Success",
-          text2: resp.data.message,
-        });
-
-        setTimeout(() => {
-          router.replace("/decide");
-        }, 2000);
-      })
-      .catch((error) => {
+      if (!code) {
         setLoading(false);
         Toast.show({
           type: "error",
-          text1: "Login Failed",
-          text2: error.response.data.message,
+          text1: "Invalid Password",
+          text2: "Provided passwords are invalid",
         });
-        console.log(error);
+        return;
+      }
+
+      if (password !== passwordConf) {
+        setLoading(false);
+        Toast.show({
+          type: "error",
+          text1: "Password must match",
+          text2: "Provided passwords don't match",
+        });
+        return;
+      }
+
+      const response = await axios.post(API_URL + "/password/reset/update", {
+        email,
+        code,
+        password,
       });
 
-    // const { user, access_token } = response.data;
-
-    // // Store the user data and access token in AsyncStorage
-    // await AsyncStorage.setItem("userData", JSON.stringify(user));
-    // await AsyncStorage.setItem("AccessToken", access_token);
-    // router.replace("/home");
-
-    // Redirect the user to the Home screen or any other screen
-    // Add your navigation logic here
+      setLoading(false);
+      Toast.show({
+        type: "success",
+        text1: "Password Updated",
+        text2: response.data.message,
+      });
+      await AsyncStorage.clear();
+      setTimeout(() => {
+        router.replace("/");
+      }, 2000);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      Toast.show({
+        type: "error",
+        text1: "Update Failed",
+        text2: error.response.data.message,
+      });
+    }
   };
-  const setupLogin = async () => {
-    await AsyncStorage.setItem("userData", JSON.stringify(user));
-    await AsyncStorage.setItem("AccessToken", access_token);
-  };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       <Stack.Screen
@@ -107,7 +108,7 @@ const LoginComponent = () => {
                 color: COLORS.primary,
               }}
             >
-              Hi Welcome Back ! 👋
+              Splendid!
             </Text>
 
             <Text
@@ -116,7 +117,7 @@ const LoginComponent = () => {
                 color: COLORS.black,
               }}
             >
-              Login to proceed!
+              Create your new password!
             </Text>
           </View>
 
@@ -128,7 +129,7 @@ const LoginComponent = () => {
                 marginVertical: 8,
               }}
             >
-              Email address
+              New Password
             </Text>
 
             <View
@@ -147,89 +148,57 @@ const LoginComponent = () => {
               }}
             >
               <TextInput
-                placeholder="Enter your email address"
+                placeholder="Enter your Password"
                 placeholderTextColor={COLORS.black}
-                keyboardType="email-address"
-                onChangeText={(text) => setEmail(text)}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={{ marginBottom: 12 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: 600,
-                marginVertical: 8,
-              }}
-            >
-              Password
-            </Text>
-
-            <View
-              style={{
-                width: "100%",
-                height: 48,
-                borderColor: COLORS.black,
-                borderWidth: 1,
-                borderRadius: 8,
-                alignItems: "center",
-                justifyContent: "center",
-                paddingLeft: 22,
-                paddingTop: 5,
-                paddingBottom: 5,
-                paddingRight: 5,
-              }}
-            >
-              <TextInput
-                placeholder="Enter your password"
-                placeholderTextColor={COLORS.black}
-                secureTextEntry={isPasswordShown}
+                secureTextEntry={true}
                 onChangeText={(text) => setPassword(text)}
                 style={{
                   width: "100%",
                   height: "100%",
                 }}
               />
+            </View>
 
-              <TouchableOpacity
-                onPress={() => setIsPasswordShown(!isPasswordShown)}
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: 600,
+                marginVertical: 8,
+              }}
+            >
+              Confirm Password
+            </Text>
+
+            <View
+              style={{
+                width: "100%",
+                height: 48,
+                borderColor: COLORS.black,
+                borderWidth: 1,
+                borderRadius: 8,
+                alignItems: "center",
+                justifyContent: "center",
+                paddingTop: 5,
+                paddingBottom: 5,
+                paddingRight: 5,
+                paddingLeft: 22,
+              }}
+            >
+              <TextInput
+                placeholder="Confirm your Password"
+                placeholderTextColor={COLORS.black}
+                secureTextEntry={true}
+                onChangeText={(text) => setPasswordConf(text)}
                 style={{
-                  position: "absolute",
-                  right: 12,
+                  width: "100%",
+                  height: "100%",
                 }}
-              >
-                {isPasswordShown == true ? (
-                  <Ionicons name="eye-off" size={24} color={COLORS.black} />
-                ) : (
-                  <Ionicons name="eye" size={24} color={COLORS.black} />
-                )}
-              </TouchableOpacity>
+              />
             </View>
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              marginVertical: 6,
-            }}
-          >
-            <Checkbox
-              style={{ marginRight: 8 }}
-              value={isChecked}
-              onValueChange={setIsChecked}
-              color={isChecked ? COLORS.primary : undefined}
-            />
-
-            <Text>Remember Me</Text>
-          </View>
-
           <Button
-            title="Login"
+            title="Reset Password"
             filled
             onPress={handleLogin}
             disabled={loading} // Disable the button when loading
@@ -238,50 +207,6 @@ const LoginComponent = () => {
               marginBottom: 4,
             }}
           />
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginVertical: 22,
-            }}
-          >
-            <Pressable onPress={() => router.push("/forgot-password")}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: COLORS.primary,
-                  fontWeight: "bold",
-                  marginLeft: 6,
-                }}
-              >
-                Forgot Password?
-              </Text>
-            </Pressable>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              marginVertical: 22,
-            }}
-          >
-            <Text style={{ fontSize: 16, color: COLORS.black }}>
-              Don't have an account?{" "}
-            </Text>
-            <Pressable onPress={() => router.push("/register")}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: COLORS.primary,
-                  fontWeight: "bold",
-                  marginLeft: 6,
-                }}
-              >
-                Register
-              </Text>
-            </Pressable>
-          </View>
         </View>
       </ScrollView>
 
@@ -312,4 +237,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginComponent;
+export default index;

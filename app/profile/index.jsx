@@ -15,6 +15,7 @@ import { COLORS, SIZES, images } from "../../constants";
 import { Stack, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Button from "../../components/button";
+import Toast from "react-native-toast-message";
 
 const Profile = () => {
   const router = useRouter();
@@ -32,7 +33,7 @@ const Profile = () => {
     try {
       const userData = await AsyncStorage.getItem("userData");
       if (!userData) {
-        router.replace("/login"); // Navigate to the login screen if no user data found
+        router.replace("/"); // Navigate to the login screen if no user data found
       } else {
         setUser(JSON.parse(userData));
       }
@@ -44,7 +45,7 @@ const Profile = () => {
 
   const handlePressLogout = async () => {
     await AsyncStorage.removeItem("userData");
-    router.replace("/login");
+    router.replace("/");
   };
 
   const requestPermissions = async () => {
@@ -88,13 +89,13 @@ const Profile = () => {
     }
   };
 
-  const editProfile = () =>{
-    router.push("/profile/edit")
-  }
+  const editProfile = () => {
+    router.push("/profile/edit");
+  };
 
-  const secureProfile = () =>{
-    router.push("/profile/security")
-  }
+  const secureProfile = () => {
+    router.push("/profile/security");
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -156,7 +157,10 @@ const Profile = () => {
                 marginTop: 30,
               }}
             >
-              <TouchableOpacity style={{ flexDirection: "row", marginBottom: 20 }} onPress={editProfile}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", marginBottom: 20 }}
+                onPress={editProfile}
+              >
                 <View
                   style={{
                     backgroundColor: "#A5E4FF",
@@ -168,7 +172,11 @@ const Profile = () => {
                     marginRight: 20,
                   }}
                 >
-                  <Ionicons name="pencil-outline" size={24} color={COLORS.black} />
+                  <Ionicons
+                    name="pencil-outline"
+                    size={24}
+                    color={COLORS.black}
+                  />
                 </View>
                 <View>
                   <Text style={{ fontWeight: 700, color: COLORS.primary }}>
@@ -180,7 +188,10 @@ const Profile = () => {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity style={{ flexDirection: "row", marginBottom: 20 }} onPress={secureProfile}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", marginBottom: 20 }}
+                onPress={secureProfile}
+              >
                 <View
                   style={{
                     backgroundColor: "#C9F95D",
@@ -192,7 +203,11 @@ const Profile = () => {
                     marginRight: 20,
                   }}
                 >
-                  <Ionicons name="lock-closed-outline" size={24} color={COLORS.black} />
+                  <Ionicons
+                    name="lock-closed-outline"
+                    size={24}
+                    color={COLORS.black}
+                  />
                 </View>
                 <View>
                   <Text style={{ fontWeight: 700, color: COLORS.primary }}>
@@ -204,7 +219,9 @@ const Profile = () => {
                 </View>
               </TouchableOpacity>
 
-              <TouchableOpacity style={{ flexDirection: "row", marginBottom: 20 }}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", marginBottom: 20 }}
+              >
                 <View
                   style={{
                     backgroundColor: "#FF9BD6",
@@ -216,7 +233,11 @@ const Profile = () => {
                     marginRight: 20,
                   }}
                 >
-                   <Ionicons name="notifications-outline" size={24} color={COLORS.black} />
+                  <Ionicons
+                    name="notifications-outline"
+                    size={24}
+                    color={COLORS.black}
+                  />
                 </View>
                 <View>
                   <Text style={{ fontWeight: 700, color: COLORS.primary }}>
@@ -229,7 +250,6 @@ const Profile = () => {
               </TouchableOpacity>
             </View>
 
-
             <View
               style={{
                 backgroundColor: "#D1D0D2",
@@ -238,7 +258,10 @@ const Profile = () => {
                 marginTop: 30,
               }}
             >
-              <TouchableOpacity style={{ flexDirection: "row"}} onPress={handleUploadCV}>
+              <TouchableOpacity
+                style={{ flexDirection: "row" }}
+                onPress={handleUploadCV}
+              >
                 <View
                   style={{
                     backgroundColor: "#FF9BD6",
@@ -250,26 +273,30 @@ const Profile = () => {
                     marginRight: 20,
                   }}
                 >
-                   <Ionicons name="cloud-upload-outline" size={24} color={COLORS.black} />
+                  <Ionicons
+                    name="cloud-upload-outline"
+                    size={24}
+                    color={COLORS.black}
+                  />
                 </View>
                 <View>
                   <Text style={{ fontWeight: 700, color: COLORS.primary }}>
                     Resume / CV
                   </Text>
-                  <Text style={{ fontSize: SIZES.small }}>
-                    Upload your CV
-                  </Text>
+                  <Text style={{ fontSize: SIZES.small }}>Upload your CV</Text>
                 </View>
               </TouchableOpacity>
             </View>
-            <Button title="Log Out"
-          filled
-          onPress={handlePressLogout}
-          disabled={loading} // Disable the button when loading
-          style={{
-            marginTop: 18,
-            marginBottom: 4,
-          }} />
+            <Button
+              title="Log Out"
+              filled
+              onPress={handlePressLogout}
+              disabled={loading} // Disable the button when loading
+              style={{
+                marginTop: 18,
+                marginBottom: 4,
+              }}
+            />
           </View>
 
           {/* <View >
@@ -297,6 +324,7 @@ const Profile = () => {
           </Button> */}
         </View>
       </View>
+     
     </SafeAreaView>
   );
 };

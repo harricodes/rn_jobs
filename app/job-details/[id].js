@@ -43,18 +43,10 @@ const JobDetails = () => {
     fetchData(dataToken, user);
   };
 
-  // const options = {
-  //   method: "GET",
-  //   url: API_URL + `/job/${params.id}/user/${user.id}`,
-
-  //   // params: { ...query },
-  // };
 
   const fetchData = async (dataToken, user) => {
     setIsLoading(true);
-    //console.log(token);
     try {
-      //const response = await axios.request(options);
       axios
         .get(API_URL + `/job/${params.id}/user/${user.id}`)
         .then((response) => {

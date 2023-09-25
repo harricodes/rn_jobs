@@ -13,28 +13,44 @@ import { Stack, useRouter } from "expo-router";
 
 const Index = () => {
   const router = useRouter();
+
+
+
   useEffect(() => {
-    setTimeout(() => {
+    const handleGetToken = async () => {
+      try {
+        const dataToken = await AsyncStorage.getItem("AccessToken");
+        const userData = await AsyncStorage.getItem("userData");
+        const welcomeDone = await AsyncStorage.getItem("welcomeDone");
+
+        if (!dataToken) {
+          if (welcomeDone !== "true") {
+            router.replace("/welcome");
+          } else {
+            router.replace("/login");
+          }
+        } else {
+          if (userData) {
+            router.replace("/decide");
+          } else {
+            router.replace("/login");
+          }
+          console.log("Redirecting to home");
+        }
+      } catch (error) {
+        console.error("Error accessing AsyncStorage:", error);
+        // Handle the error as needed, e.g., show an error message
+      }
+    };
+
+    // Call handleGetToken after a delay of 3 seconds
+    const timeout = setTimeout(() => {
       handleGetToken();
     }, 3000);
-  }, []);
 
-  const handleGetToken = async () => {
-    const dataToken = await AsyncStorage.getItem("AccessToken");
-    const userData = await AsyncStorage.getItem("userData");
-    const welcomeDone = await AsyncStorage.getItem("welcomeDone");
-    if (!dataToken) {
-      if (welcomeDone !== "true") {
-        router.replace("/welcome");
-      } else {
-        router.replace("/login");
-      } // Uncomment this if using a valid router instance
-    } else {
-      console.log(userData);
-      router.replace("/decide"); // Uncomment this if using a valid router instance
-      console.log("Redirecting to home"); // Placeholder for router.replace("/home");
-    }
-  };
+    // Cleanup the timeout if the component unmounts before the delay
+    return () => clearTimeout(timeout);
+  }, [router]); // Include router in the dependency array to ensure it's up-to-date
 
   return (
     <SafeAreaView style={styles.container}>

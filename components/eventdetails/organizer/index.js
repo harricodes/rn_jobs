@@ -31,7 +31,9 @@ const Organizer = ({ companyLogo, jobTitle, companyName, location }) => {
             style={styles.locationImage}
           />
         </View>
-        <Text style={styles.locationName}>{location}</Text>
+        <Text style={styles.locationName}>
+          {location.length > 5 ? location.substring(0, 8) + "..." : location}
+        </Text>
       </View>
     </View>
   );

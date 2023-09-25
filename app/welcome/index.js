@@ -122,7 +122,7 @@ const StepOne = () => {
 
             <Button
               title="Next"
-              onPress={() => router.push("/welcome/jobs")}
+              onPress={() => router.replace("/welcome/jobs")}
               style={{
                 marginTop: 42,
                 width: "100%",

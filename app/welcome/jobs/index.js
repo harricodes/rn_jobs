@@ -88,7 +88,7 @@ const Jobs = () => {
 
             <Button
               title="Next"
-              onPress={() => router.push("/welcome/events")}
+              onPress={() => router.replace("/welcome/events")}
               style={{
                 marginTop: 42,
                 width: "100%",

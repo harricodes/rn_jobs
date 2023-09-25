@@ -88,7 +88,7 @@ const Events = () => {
 
             <Button
               title="Next"
-              onPress={() => router.push("/welcome/services")}
+              onPress={() => router.replace("/welcome/services")}
               style={{
                 marginTop: 42,
                 width: "100%",

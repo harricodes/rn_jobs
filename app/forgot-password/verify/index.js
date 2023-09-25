@@ -10,10 +10,10 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from "react-native";
-import { COLORS, FONT, SIZES, SHADOWS, images } from "../../constants";
+import { COLORS, FONT, SIZES, SHADOWS, images } from "../../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import Checkbox from "expo-checkbox";
-import Button from "../../components/button";
+import Button from "../../../components/button";
 
 import { Stack, useRouter } from "expo-router";
 
@@ -23,41 +23,50 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { API_URL } from "@env";
 
-const ForgotPassword = () => {
+const index = () => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState(null);
-
+  const [code, setCode] = useState();
   const handleLogin = async () => {
-    setLoading(true); // Show loading animation
+    setLoading(true);
+    const email = await AsyncStorage.getItem("reset");
+    console.log(email);
+    if (!code) {
+      setLoading(false);
+      Toast.show({
+        type: "error",
+        text1: "Invalid Code",
+        text2: "Provided code is invalid",
+      });
+      return;
+    }
+
     try {
-      const response = await axios.post(API_URL + "/password/reset/email", {
+      const response = await axios.post(API_URL + "/password/reset/verify", {
         email,
+        code,
       });
 
-      console.log(response.data);
       setLoading(false);
       Toast.show({
         type: "success",
-        text1: "Email Sent",
+        text1: "Code Verified",
         text2: response.data.message,
       });
-      await AsyncStorage.setItem("reset", email);
+      await AsyncStorage.setItem("code", code);
       setTimeout(() => {
-        router.push("/forgot-password/verify");
+        router.push("/forgot-password/password");
       }, 2000);
     } catch (error) {
       console.log(error);
+      setLoading(false);
       Toast.show({
         type: "error",
-        text1: "Email send error",
+        text1: "Invalid Code",
         text2: error.response.data.message,
       });
-    } finally {
-      setLoading(false); // Hide loading animation
     }
   };
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
       <Stack.Screen
@@ -85,7 +94,7 @@ const ForgotPassword = () => {
                 color: COLORS.primary,
               }}
             >
-              Let's help you out!
+              Verify Code!
             </Text>
 
             <Text
@@ -94,7 +103,7 @@ const ForgotPassword = () => {
                 color: COLORS.black,
               }}
             >
-              Input your email to proceed!
+              Input your code to proceed!
             </Text>
           </View>
 
@@ -106,7 +115,7 @@ const ForgotPassword = () => {
                 marginVertical: 8,
               }}
             >
-              Email address
+              Code
             </Text>
 
             <View
@@ -125,10 +134,10 @@ const ForgotPassword = () => {
               }}
             >
               <TextInput
-                placeholder="Enter your email address"
+                placeholder="Enter your Code"
                 placeholderTextColor={COLORS.black}
-                keyboardType="email-address"
-                onChangeText={(text) => setEmail(text)}
+                keyboardType="numeric"
+                onChangeText={(text) => setCode(text)}
                 style={{
                   width: "100%",
                   height: "100%",
@@ -138,7 +147,7 @@ const ForgotPassword = () => {
           </View>
 
           <Button
-            title="Reset Password"
+            title="Verify Code"
             filled
             onPress={handleLogin}
             disabled={loading} // Disable the button when loading
@@ -177,4 +186,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ForgotPassword;
+export default index;
