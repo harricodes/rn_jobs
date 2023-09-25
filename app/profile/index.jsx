@@ -7,18 +7,21 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { Avatar, Button, TextInput } from "react-native-paper";
+import { Avatar, TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import { COLORS, SIZES, images } from "../../constants";
 import { Stack, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import Button from "../../components/button";
 
 const Profile = () => {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [cvUri, setCvUri] = useState(null);
   const [profileImageUri, setProfileImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     handleGetUser();
@@ -85,6 +88,14 @@ const Profile = () => {
     }
   };
 
+  const editProfile = () =>{
+    router.push("/profile/edit")
+  }
+
+  const secureProfile = () =>{
+    router.push("/profile/security")
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Stack.Screen
@@ -145,7 +156,7 @@ const Profile = () => {
                 marginTop: 30,
               }}
             >
-              <View style={{ flexDirection: "row", marginBottom: 20 }}>
+              <TouchableOpacity style={{ flexDirection: "row", marginBottom: 20 }} onPress={editProfile}>
                 <View
                   style={{
                     backgroundColor: "#A5E4FF",
@@ -157,7 +168,7 @@ const Profile = () => {
                     marginRight: 20,
                   }}
                 >
-                  <Text>P</Text>
+                  <Ionicons name="pencil-outline" size={24} color={COLORS.black} />
                 </View>
                 <View>
                   <Text style={{ fontWeight: 700, color: COLORS.primary }}>
@@ -167,9 +178,9 @@ const Profile = () => {
                     Make changes to your profile information.
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
 
-              <View style={{ flexDirection: "row", marginBottom: 20 }}>
+              <TouchableOpacity style={{ flexDirection: "row", marginBottom: 20 }} onPress={secureProfile}>
                 <View
                   style={{
                     backgroundColor: "#C9F95D",
@@ -181,7 +192,7 @@ const Profile = () => {
                     marginRight: 20,
                   }}
                 >
-                  <Text>P</Text>
+                  <Ionicons name="lock-closed-outline" size={24} color={COLORS.black} />
                 </View>
                 <View>
                   <Text style={{ fontWeight: 700, color: COLORS.primary }}>
@@ -191,9 +202,9 @@ const Profile = () => {
                     Change your password
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
 
-              <View style={{ flexDirection: "row", marginBottom: 20 }}>
+              <TouchableOpacity style={{ flexDirection: "row", marginBottom: 20 }}>
                 <View
                   style={{
                     backgroundColor: "#FF9BD6",
@@ -205,7 +216,7 @@ const Profile = () => {
                     marginRight: 20,
                   }}
                 >
-                  <Text>P</Text>
+                   <Ionicons name="notifications-outline" size={24} color={COLORS.black} />
                 </View>
                 <View>
                   <Text style={{ fontWeight: 700, color: COLORS.primary }}>
@@ -215,8 +226,50 @@ const Profile = () => {
                     Setup notification preference
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             </View>
+
+
+            <View
+              style={{
+                backgroundColor: "#D1D0D2",
+                borderRadius: 4,
+                padding: 10,
+                marginTop: 30,
+              }}
+            >
+              <TouchableOpacity style={{ flexDirection: "row"}} onPress={handleUploadCV}>
+                <View
+                  style={{
+                    backgroundColor: "#FF9BD6",
+                    width: 40, // Adjust the width as needed
+                    height: 40, // Adjust the height as needed
+                    borderRadius: 50, // Half of the width or height to create a circle
+                    alignItems: "center",
+                    justifyContent: "center", // Center the content inside the circle
+                    marginRight: 20,
+                  }}
+                >
+                   <Ionicons name="cloud-upload-outline" size={24} color={COLORS.black} />
+                </View>
+                <View>
+                  <Text style={{ fontWeight: 700, color: COLORS.primary }}>
+                    Resume / CV
+                  </Text>
+                  <Text style={{ fontSize: SIZES.small }}>
+                    Upload your CV
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+            <Button title="Log Out"
+          filled
+          onPress={handlePressLogout}
+          disabled={loading} // Disable the button when loading
+          style={{
+            marginTop: 18,
+            marginBottom: 4,
+          }} />
           </View>
 
           {/* <View >
