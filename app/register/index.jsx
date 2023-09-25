@@ -45,7 +45,7 @@ const Register = () => {
 
       await AsyncStorage.setItem("userData", JSON.stringify(user));
       await AsyncStorage.setItem("AccessToken", access_token);
-      router.replace("/home");
+      router.replace("/decide");
     } catch (error) {
       console.error("Registration error:", error.response.data.error);
       Toast.show({

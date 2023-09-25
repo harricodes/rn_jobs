@@ -31,7 +31,7 @@ const Index = () => {
       } // Uncomment this if using a valid router instance
     } else {
       console.log(userData);
-      router.replace("/home"); // Uncomment this if using a valid router instance
+      router.replace("/decide"); // Uncomment this if using a valid router instance
       console.log("Redirecting to home"); // Placeholder for router.replace("/home");
     }
   };

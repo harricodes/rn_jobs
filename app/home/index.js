@@ -73,7 +73,7 @@ const Home = () => {
           <Nearbyjobs />
         </View>
       </ScrollView>
-      <HomeFooter />
+      {/* <HomeFooter /> */}
     </SafeAreaView>
   );
 };

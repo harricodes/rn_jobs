@@ -8,8 +8,8 @@ import {
   SafeAreaView,
   ActivityIndicator,
   StyleSheet,
-  Picker
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import { COLORS, images } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
@@ -29,22 +29,21 @@ const AddProductComponent = () => {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [loading, setLoading] = useState(false);
-  const [category, setCategory] = useState([])
-  const [user, setUser] = useState([])
+  const [category, setCategory] = useState([]);
+  const [user, setUser] = useState([]);
 
+  useEffect(() => {
+    getCategory();
+  }, []);
 
-  useEffect(() =>{
-    getCategory()
-  }, [])
-
-  const getCategory = async () =>{
+  const getCategory = async () => {
     const dataUser = await AsyncStorage.getItem("userData");
-    setUser(JSON.parse(dataUser))
+    setUser(JSON.parse(dataUser));
 
-    axios.get(API_URL+"/categories").then((resp)=>{
-        setCategory(resp.data.categories)
-    })
-  }
+    axios.get(API_URL + "/categories").then((resp) => {
+      setCategory(resp.data.categories);
+    });
+  };
 
   const handleImagePicker = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -63,12 +62,11 @@ const AddProductComponent = () => {
     setLoading(true); // Show loading animation
     try {
       const formData = new FormData();
-      formData.append('productImage', {
+      formData.append("productImage", {
         uri: productImage,
-        name: 'productImage.jpg',
-        type: 'image/jpeg',
+        name: "productImage.jpg",
+        type: "image/jpeg",
       });
-      
 
       console.log({
         productImage,
@@ -76,19 +74,21 @@ const AddProductComponent = () => {
         productName,
         description,
         price,
-        user_id: user.id
-      })
+        user_id: user.id,
+      });
 
-      axios.post(API_URL+"/product-create",{
-        productImage,
-        productCategory,
-        productName,
-        description,
-        price,
-        user_id: user.id
-      } ).then((resp) => {
-        console.log(resp.data)
-      })
+      axios
+        .post(API_URL + "/product-create", {
+          productImage,
+          productCategory,
+          productName,
+          description,
+          price,
+          user_id: user.id,
+        })
+        .then((resp) => {
+          console.log(resp.data);
+        });
 
       Toast.show({
         type: "success",
@@ -109,33 +109,34 @@ const AddProductComponent = () => {
     setProductCategory(value);
   };
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite, padding: 15 }}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: COLORS.lightWhite, padding: 15 }}
+    >
       {/* ... your header and ScrollView code ... */}
       <ScrollView showsVerticalScrollIndicator={false}>
-      <Stack.Screen
-        options={{
-          headerStyle: { backgroundColor: COLORS.lightWhite },
-          headerShadowVisible: false,
-          headerRight: () => (
-            <ScreenHeaderBtn iconUrl={images.profile} dimensions="100%" />
-          ),
-          headerTitle: "",
-        }}
-      />
+        <Stack.Screen
+          options={{
+            headerStyle: { backgroundColor: COLORS.lightWhite },
+            headerShadowVisible: false,
+            headerRight: () => (
+              <ScreenHeaderBtn iconUrl={images.profile} dimensions="100%" />
+            ),
+            headerTitle: "",
+          }}
+        />
         {/* ... your existing code ... */}
         <View style={{ marginVertical: 22 }}>
-            <Text
-              style={{
-                fontSize: 22,
-                fontWeight: "bold",
-                marginVertical: 12,
-                color: COLORS.primary,
-              }}
-            >
-              Add a new product ➕
-            </Text>
-
-          </View>
+          <Text
+            style={{
+              fontSize: 22,
+              fontWeight: "bold",
+              marginVertical: 12,
+              color: COLORS.primary,
+            }}
+          >
+            Add a new product ➕
+          </Text>
+        </View>
         {/* Product Image */}
         <TouchableOpacity
           onPress={handleImagePicker}
@@ -157,7 +158,11 @@ const AddProductComponent = () => {
                 style={{ width: "100%", height: "100%", borderRadius: 8 }}
               />
             ) : (
-              <Ionicons name="add-circle-outline" size={40} color={COLORS.gray} />
+              <Ionicons
+                name="add-circle-outline"
+                size={40}
+                color={COLORS.gray}
+              />
             )}
           </View>
         </TouchableOpacity>
@@ -168,18 +173,16 @@ const AddProductComponent = () => {
             Product Category
           </Text>
           <Picker
-          selectedValue={productCategory}
-           onValueChange={handleDropdownChange}
-          style={styles.input}
-        >
+            selectedValue={productCategory}
+            onValueChange={handleDropdownChange}
+            style={styles.input}
+          >
             <Picker.Item label="Select Category" value="" />
-            {category && (
-                category.map((res, index) =>(
-                    <Picker.Item key={index} label={res.name} value={res.id} />
-                ))
-            )}
-          
-        </Picker>
+            {category &&
+              category.map((res, index) => (
+                <Picker.Item key={index} label={res.name} value={res.id} />
+              ))}
+          </Picker>
         </View>
 
         {/* Product Name */}
@@ -221,16 +224,15 @@ const AddProductComponent = () => {
         </View>
 
         <Button
-        title="Add Product"
-        filled
-         onPress={handleAddProduct}
-        disabled={loading} // Disable the button when loading
-        style={{
-          marginTop: 18,
-          marginBottom: 4,
-        }}
-      />
-
+          title="Add Product"
+          filled
+          onPress={handleAddProduct}
+          disabled={loading} // Disable the button when loading
+          style={{
+            marginTop: 18,
+            marginBottom: 4,
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
@@ -248,4 +250,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddProductComponent
+export default AddProductComponent;

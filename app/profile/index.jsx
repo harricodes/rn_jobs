@@ -1,23 +1,35 @@
-import { Stack, useRouter } from "expo-router";
-import React, { useEffect } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Avatar, Button } from "react-native-paper";
-import { images, COLORS } from "../../constants";
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
+import { Avatar, Button, TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as DocumentPicker from "expo-document-picker";
+import * as ImagePicker from "expo-image-picker";
+import { COLORS, SIZES, images } from "../../constants";
+import { Stack, useRouter } from "expo-router";
 
-const ProfilePage = () => {
+const Profile = () => {
   const router = useRouter();
-  const [user, setUser] = React.useState(null);
+  const [user, setUser] = useState(null);
+  const [cvUri, setCvUri] = useState(null);
+  const [profileImageUri, setProfileImageUri] = useState(null);
+
   useEffect(() => {
     handleGetUser();
+    requestPermissions();
   }, []);
 
   const handleGetUser = async () => {
     try {
-      const dataToken = await AsyncStorage.getItem("AccessToken");
       const userData = await AsyncStorage.getItem("userData");
-      if (!userData || !dataToken) {
-        router.replace("/login"); // Navigate to login screen if no user data or token found
+      if (!userData) {
+        router.replace("/login"); // Navigate to the login screen if no user data found
       } else {
         setUser(JSON.parse(userData));
       }
@@ -27,14 +39,54 @@ const ProfilePage = () => {
     }
   };
 
-  const handlePress = async () => {
-    await AsyncStorage.removeItem("AccessToken");
+  const handlePressLogout = async () => {
     await AsyncStorage.removeItem("userData");
-
     router.replace("/login");
   };
+
+  const requestPermissions = async () => {
+    const { status } = await DocumentPicker.requestDocumentPermissionsAsync();
+    if (status !== "granted") {
+      console.error("Document permissions not granted");
+    }
+
+    const { status: imageStatus } =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (imageStatus !== "granted") {
+      console.error("Media library permissions not granted");
+    }
+  };
+
+  const handleUploadCV = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/pdf", // Restrict to PDF files
+      });
+
+      if (result.type === "success") {
+        setCvUri(result.uri);
+      }
+    } catch (error) {
+      console.error("Error uploading CV:", error);
+      // Handle the error as needed, e.g., show an error message
+    }
+  };
+
+  const handleUploadProfileImage = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync();
+
+      if (!result.cancelled) {
+        setProfileImageUri(result.uri);
+      }
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      // Handle the error as needed, e.g., show an error message
+    }
+  };
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: COLORS.lightWhite },
@@ -43,36 +95,156 @@ const ProfilePage = () => {
           headerTitle: "",
         }}
       />
-      <View style={styles.profileContainer}>
-        <Avatar.Image
-          size={120}
-          source={images.profile}
-          style={styles.avatar}
-        />
-        <View style={styles.table}>
-          <View style={styles.row}>
-            <Text style={styles.label}>Name:</Text>
-            <Text style={styles.value}>{user?.name}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Email:</Text>
-            <Text style={styles.value}>{user?.email}</Text>
-          </View>
-          <View style={styles.row}>
-            <Text style={styles.label}>Phone Number:</Text>
-            <Text style={styles.value}>{user?.phone_number}</Text>
-          </View>
-        </View>
+      <View style={styles.container}>
+        <View style={styles.profileContainer}>
+          {profileImageUri ? (
+            <Avatar.Image
+              size={70}
+              source={{ uri: profileImageUri }}
+              style={styles.avatar}
+            />
+          ) : (
+            <Avatar.Image
+              size={70}
+              source={images.profile}
+              style={styles.avatar}
+            />
+          )}
 
-        <Button
-          mode="contained"
-          onPress={handlePress}
-          style={styles.editButton}
-        >
-          Logout
-        </Button>
+          <View style={{ marginTop: 20, width: "100%" }}>
+            <View
+              style={{
+                width: "100%",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={{
+                  fontWeight: 700,
+                  color: COLORS.primary,
+                  fontSize: SIZES.large,
+                }}
+              >
+                {user?.name}
+              </Text>
+              <Text
+                style={{
+                  color: COLORS.gray,
+                }}
+              >
+                {user?.email}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                backgroundColor: "#D1D0D2",
+                borderRadius: 4,
+                padding: 10,
+                marginTop: 30,
+              }}
+            >
+              <View style={{ flexDirection: "row", marginBottom: 20 }}>
+                <View
+                  style={{
+                    backgroundColor: "#A5E4FF",
+                    width: 40, // Adjust the width as needed
+                    height: 40, // Adjust the height as needed
+                    borderRadius: 50, // Half of the width or height to create a circle
+                    alignItems: "center",
+                    justifyContent: "center", // Center the content inside the circle
+                    marginRight: 20,
+                  }}
+                >
+                  <Text>P</Text>
+                </View>
+                <View>
+                  <Text style={{ fontWeight: 700, color: COLORS.primary }}>
+                    Edit Profile
+                  </Text>
+                  <Text style={{ fontSize: SIZES.small }}>
+                    Make changes to your profile information.
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{ flexDirection: "row", marginBottom: 20 }}>
+                <View
+                  style={{
+                    backgroundColor: "#C9F95D",
+                    width: 40, // Adjust the width as needed
+                    height: 40, // Adjust the height as needed
+                    borderRadius: 50, // Half of the width or height to create a circle
+                    alignItems: "center",
+                    justifyContent: "center", // Center the content inside the circle
+                    marginRight: 20,
+                  }}
+                >
+                  <Text>P</Text>
+                </View>
+                <View>
+                  <Text style={{ fontWeight: 700, color: COLORS.primary }}>
+                    Security
+                  </Text>
+                  <Text style={{ fontSize: SIZES.small }}>
+                    Change your password
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{ flexDirection: "row", marginBottom: 20 }}>
+                <View
+                  style={{
+                    backgroundColor: "#FF9BD6",
+                    width: 40, // Adjust the width as needed
+                    height: 40, // Adjust the height as needed
+                    borderRadius: 50, // Half of the width or height to create a circle
+                    alignItems: "center",
+                    justifyContent: "center", // Center the content inside the circle
+                    marginRight: 20,
+                  }}
+                >
+                  <Text>P</Text>
+                </View>
+                <View>
+                  <Text style={{ fontWeight: 700, color: COLORS.primary }}>
+                    Notifications
+                  </Text>
+                  <Text style={{ fontSize: SIZES.small }}>
+                    Setup notification preference
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          {/* <View >
+            
+            {cvUri && (
+              <View style={styles.row}>
+                <Text style={styles.label}>CV:</Text>
+                <Text style={styles.value}>{cvUri}</Text>
+              </View>
+            )}
+            <TouchableOpacity onPress={handleUploadCV}>
+              <Text style={styles.uploadButton}>Upload CV</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleUploadProfileImage}>
+              <Text style={styles.uploadButton}>Upload Profile Picture</Text>
+            </TouchableOpacity>
+          </View> */}
+
+          {/* <Button
+            mode="contained"
+            onPress={handlePressLogout}
+            style={styles.logoutButton}
+          >
+            Logout
+          </Button> */}
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -80,53 +252,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.lightWhite,
-  },
-  backgroundImage: {
-    width: "100%",
-    height: "50%",
-    resizeMode: "cover",
+    padding: 10,
   },
   profileContainer: {
-    position: "absolute",
-    top: "10%",
     alignItems: "center",
     width: "100%",
   },
   avatar: {
-    marginTop: -80,
+    marginTop: 20,
     borderWidth: 4,
     borderColor: "#fff",
   },
-  name: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginVertical: 10,
-    color: "#333",
-  },
-  bio: {
-    fontSize: 16,
-    color: "#666",
-  },
-  socialLinksContainer: {
-    flexDirection: "row",
-    marginTop: 10,
-  },
-  socialLink: {
-    marginHorizontal: 10,
-    color: "#2e78b7",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  editButton: {
-    marginTop: 20,
-    backgroundColor: "#2e78b7",
-  },
   table: {
-    marginTop: "20px",
+    marginTop: 20,
     borderWidth: 1,
     borderColor: "#000",
     padding: 10,
-    margin: 10,
+    marginLeft: 16,
+    width: "100%",
   },
   row: {
     flexDirection: "row",
@@ -137,12 +280,23 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginRight: 10,
-    textAlign: "left", // Align the text to the left within each cell
+    textAlign: "left",
   },
   value: {
     flex: 1,
-    textAlign: "left", // Align the text to the left within each cell
+    textAlign: "left",
+  },
+  uploadButton: {
+    marginTop: 10,
+    color: "#2e78b7",
+    fontSize: 16,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  logoutButton: {
+    marginTop: 20,
+    backgroundColor: "#2e78b7",
   },
 });
 
-export default ProfilePage;
+export default Profile;

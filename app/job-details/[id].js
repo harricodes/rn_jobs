@@ -27,7 +27,6 @@ const JobDetails = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  
 
   useEffect(() => {});
 
@@ -124,7 +123,9 @@ const JobDetails = () => {
         ) : error ? (
           <Text>Something went wrong</Text>
         ) : data.length === 0 ? (
-          <Text>No data</Text>
+          <View>
+            <ActivityIndicator size={SIZES.large} />
+          </View>
         ) : (
           <View style={{ padding: SIZES.medium, paddingBottom: 100 }}>
             <Company
@@ -142,7 +143,7 @@ const JobDetails = () => {
           </View>
         )}
       </ScrollView>
-      
+
       <JobFooter jobId={data?.id} is_applied={data?.is_applied} />
     </SafeAreaView>
   );

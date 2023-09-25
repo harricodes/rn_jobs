@@ -41,7 +41,7 @@ const LoginComponent = () => {
         setLoading(true);
         await AsyncStorage.setItem("userData", JSON.stringify(resp.data.user));
         await AsyncStorage.setItem("AccessToken", resp.data.access_token);
-        router.replace("/home");
+        router.replace("/decide");
       });
 
       // const { user, access_token } = response.data;

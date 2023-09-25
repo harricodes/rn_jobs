@@ -7,6 +7,7 @@ import hero3 from "../assets/hero3.jpg";
 import searchJob from "../assets/job-search.png";
 import events from "../assets/calendar.png";
 import services from "../assets/settings.png";
+import uza from "../assets/bag.png";
 
 export default {
   profile,
@@ -18,4 +19,5 @@ export default {
   searchJob,
   events,
   services,
+  uza,
 };
