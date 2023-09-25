@@ -33,31 +33,33 @@ const LoginComponent = () => {
 
   const handleLogin = async () => {
     setLoading(true); // Show loading animation
-    try {
-      const response = await axios.post(API_URL + "/login", {
+    
+      axios.post(API_URL + "/login", {
         email,
         password,
+      }).then(async (resp) =>{
+        setLoading(true);
+        await AsyncStorage.setItem("userData", JSON.stringify(resp.data.user));
+        await AsyncStorage.setItem("AccessToken", resp.data.access_token);
+        router.replace("/home");
       });
 
-      const { user, access_token } = response.data;
+      // const { user, access_token } = response.data;
 
-      // Store the user data and access token in AsyncStorage
-      await AsyncStorage.setItem("userData", JSON.stringify(user));
-      await AsyncStorage.setItem("AccessToken", access_token);
-      router.replace("/home");
+      // // Store the user data and access token in AsyncStorage
+      // await AsyncStorage.setItem("userData", JSON.stringify(user));
+      // await AsyncStorage.setItem("AccessToken", access_token);
+      // router.replace("/home");
 
       // Redirect the user to the Home screen or any other screen
       // Add your navigation logic here
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Login error",
-        text2: error.response.data.error,
-      });
-    } finally {
-      setLoading(false); // Hide loading animation
-    }
+    
+    
   };
+  const setupLogin = async () =>{
+    await AsyncStorage.setItem("userData", JSON.stringify(user));
+    await AsyncStorage.setItem("AccessToken", access_token);
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>

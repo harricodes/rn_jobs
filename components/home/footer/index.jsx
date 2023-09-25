@@ -67,7 +67,7 @@ const HomeFooter = () => {
         </View>
       </TabTouchable>
       <TabTouchable
-        // onPress={() => handleTabPress('Shop')}
+         onPress={() => handleTabPress('Shop')}
         background={
           Platform.OS === "android"
             ? TouchableNativeFeedback.Ripple("#216397")
